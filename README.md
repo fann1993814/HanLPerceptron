@@ -1,5 +1,5 @@
 # HanLPerceptron:
-HanLPerceptron主要是移植自 [HanLP v1](https://github.com/hankcs/HanLP/tree/1.x) 中包含Pecptron模組相關的核心功能，其中包含中文斷詞、詞性標註、命名實體識別等常用分析模組，而不包括Online Learning相關功能。此外，同樣支持簡體中文和繁體中文的分析，以及自定義辭典的整合。HanLPerceptron是原生Python，更方便搭配Python開發的應用相關結合。
+HanLPerceptron主要是移植自 [HanLP v1](https://github.com/hankcs/HanLP/tree/1.x) 中包含Perceptron模組相關的核心功能，其中包含中文斷詞、詞性標註、命名實體識別等常用分析模組，而不包括Online Learning相關功能。此外，同樣支持簡體中文和繁體中文的分析，以及自定義辭典的整合。HanLPerceptron是原生Python，更方便搭配Python開發的應用相關結合。
 
 ## 安裝
 ```bash
