@@ -5,8 +5,8 @@ HanLPerceptron主要是移植自 [HanLP v1](https://github.com/hankcs/HanLP/tree
 ```bash
 pip install hanlperceptron
 ```
-*需要採用Python 3.6以上版本
-*亦或下載 https://github.com/fann1993814/HanLPerceptron ，解壓縮執行 `python setup.py install`
+* 需要採用Python 3.6以上版本
+* 亦或下載 https://github.com/fann1993814/HanLPerceptron ，解壓縮執行 `python setup.py install`
 
 ## 資料包準備
 請下載：[data.zip](http://nlp.hankcs.com/download.php?file=data) (註：使用資料請遵守 [HanLP](https://github.com/hankcs/HanLP/) 的授權規範)
