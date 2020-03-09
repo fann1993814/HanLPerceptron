@@ -87,7 +87,7 @@ class ByteArray:
 
 unpack_float = struct.Struct('f').unpack
 unpack_double = struct.Struct('d').unpack
-pack_ulong = struct.Struct('L').pack
+pack_ulong = struct.Struct('I').pack
 pack_ulonglong = struct.Struct('Q').pack
 
 def bytesHighFirstToInt(_bytes, _start):

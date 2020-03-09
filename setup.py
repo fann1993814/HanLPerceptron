@@ -28,7 +28,7 @@ else:
 
 setup(
     name='hanlperceptron',
-    version='0.1.0',
+    version='0.1.1',
     description='Native Python HanLP Perceptron Model: HanLPerceptron',
     long_description=long_description,
     long_description_content_type="text/markdown",
