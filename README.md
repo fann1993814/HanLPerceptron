@@ -47,7 +47,18 @@ pip install hanlperceptron
   * model_path為資料包的絕對路徑
   * POSTagger的模型有兩種不同的選擇 1. ctb 2. pku，分別輸出的類型也不同
   * NERecognizer輸入為斷詞結果和標註結果，其中標註結果須為pku的詞性準則
-  
+  ---
+  * POSTagger的標簽集合如下表：
+
+  | 標簽 | 含義     | 標簽 | 含義     | 標簽 | 含義     | 標簽 | 含義     |
+  | ---- | -------- | ---- | -------- | ---- | -------- | ---- | -------- |
+  | n    | 普通名詞 | f    | 方位名詞 | s    | 處所名詞 | t    | 時間     |
+  | nr   | 人名     | ns   | 地名     | nt   | 機構名   | nw   | 作品名   |
+  | nz   | 其他專名 | v    | 普通動詞 | vd   | 動副詞   | vn   | 名動詞   |
+  | a    | 形容詞   | ad   | 副形詞   | an   | 名形詞   | d    | 副詞     |
+  | m    | 數量詞   | q    | 量詞     | r    | 代詞     | p    | 介詞     |
+  | c    | 連詞     | u    | 助詞     | xc   | 其他虛詞 | w    | 標點符號 |
+
 ## 解碼模式選擇
 ```python
 >>> segmenter = hanlperceptron.Segmenter(model_path+'pku199801/cws.bin')
