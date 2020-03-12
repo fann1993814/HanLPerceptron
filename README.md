@@ -58,11 +58,6 @@ pip install hanlperceptron
   | a    | 形容詞   | ad   | 副形詞   | an   | 名形詞   | d    | 副詞     |
   | m    | 數量詞   | q    | 量詞     | r    | 代詞     | p    | 介詞     |
   | c    | 連詞     | u    | 助詞     | xc   | 其他虛詞 | w    | 標點符號 |
-  | PER  | 人名     | LOC  | 地名     | ORG  | 機構名   | TIME | 時間     |
-
-  * NERecognizer
-  * Dependency Parsing
-  * Semantic Dependency Parsing
 
 ## 解碼模式選擇
 ```python
