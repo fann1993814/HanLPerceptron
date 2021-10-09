@@ -17,6 +17,8 @@
 
 import os
 
+get_module_path = lambda *res: os.path.normpath(os.path.join(os.getcwd(), os.path.dirname(__file__), *res))
+
 try:
     import pkg_resources
     get_module_res = lambda *res: pkg_resources.resource_stream(__name__,

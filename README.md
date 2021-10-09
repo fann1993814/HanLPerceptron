@@ -38,7 +38,7 @@ pip install hanlperceptron
 >>> nerecognizer = hanlperceptron.NERecognizer(model_path+'pku1998/ner.bin')
 >>> segmenter.segment('大西洋和太平洋')
 ['大西洋', '和', '太平洋']
->>> postager.tag(['大西洋', '和', '太平洋'])
+>>> postager.tagging(['大西洋', '和', '太平洋'])
 ['ns', 'c', 'ns']
 >>> nerecognizer.recognize(['大西洋', '和', '太平洋'], ['ns', 'c', 'ns'])
 ['S', 'O', 'S']
@@ -70,6 +70,7 @@ pip install hanlperceptron
 - 說明
   * HanLP官方預設是採用viterbi解碼（精度高速度慢），然而考量速度因素，因此額外設計greedy解碼（精度略低速度快），讓用戶根據處理資料還有各自需求去調整。
   * 每個模組預設皆為viterbi解碼（Segmenter, POSTagger, NERecognizer）
+  * Segmenter和POSTagger在預設狀態會使用CoreDictionary來先分析。
   
 ## 加速載入模型
 ```python
@@ -93,20 +94,37 @@ pip install hanlperceptron
 ```python
 >>> segmenter.segment('畢卡索是堂何塞路伊思布拉斯可和瑪莉亞畢卡索洛佩茲的第一個孩子。')
 >>> ['畢卡索', '是', '堂何塞路', '伊', '思布拉斯可', '和', '瑪莉亞', '畢卡', '索洛佩茲', '的', '第一', '個', '孩子', '。']
->>> postager.tag(['畢卡索', '是', '堂何塞路', '伊', '思布拉斯可', '和', '瑪莉亞', '畢卡', '索洛佩茲', '的', '第一', '個', '孩子', '。'])
+>>> postager.tagging(['畢卡索', '是', '堂何塞路', '伊', '思布拉斯可', '和', '瑪莉亞', '畢卡', '索洛佩茲', '的', '第一', '個', '孩子', '。'])
 >>> ['vn', 'v', 'q', 'j', 'v', 'c', 'ns', 'n', 'nr', 'u', 'm', 'q', 'n', 'w']
 >>> # Custom Dictionary Format:
 >>> # 堂何塞路伊思布拉斯可 1 nr
 >>> # 瑪莉亞畢卡索洛佩茲 1 nr
 >>> segmenter.load_custom_dict('dict.txt')
->>> segmenter.segment_with_dict('畢卡索是堂何塞路伊思布拉斯可和瑪莉亞畢卡索洛佩茲的第一個孩子。')
+>>> segmenter.segment('畢卡索是堂何塞路伊思布拉斯可和瑪莉亞畢卡索洛佩茲的第一個孩子。')
 >>> ['畢卡索', '是', '堂何塞路伊思布拉斯可', '和', '瑪莉亞畢卡索洛佩茲', '的', '第一', '個', '孩子', '。']
->>> postager.tag_with_dict(['畢卡索', '是', '堂何塞路伊思布拉斯可', '和', '瑪莉亞畢卡索洛佩茲', '的', '第一', '個', '孩子', '。'])
+>>> postager.tagging(['畢卡索', '是', '堂何塞路伊思布拉斯可', '和', '瑪莉亞畢卡索洛佩茲', '的', '第一', '個', '孩子', '。'])
 >>> ['vn', 'v', 'nr', 'c', 'nr', 'u', 'm', 'q', 'n', 'w']
 ```
 - 說明
   * 載入自定義辭典可透過`load_custom_dict`完成針對Segmenter，同時也會載入詞性至POSTagger。
   * 辭典的格式參考[jieba-dict](https://github.com/fxsjy/jieba/raw/master/extra_dict/dict.txt.big)
+
+## 加新詞或詞性
+```python
+>>> segmenter.segment('畢卡索是堂何塞路伊思布拉斯可和瑪莉亞畢卡索洛佩茲的第一個孩子。')
+>>> ['畢卡索', '是', '堂何塞路', '伊', '思布拉斯可', '和', '瑪莉亞', '畢卡', '索洛佩茲', '的', '第一', '個', '孩子', '。']
+>>> postager.tagging(['畢卡索', '是', '堂何塞路', '伊', '思布拉斯可', '和', '瑪莉亞', '畢卡', '索洛佩茲', '的', '第一', '個', '孩子', '。'])
+>>> ['vn', 'v', 'q', 'j', 'v', 'c', 'ns', 'n', 'nr', 'u', 'm', 'q', 'n', 'w']
+>>> # 堂何塞路伊思布拉斯可 1 nr
+>>> # 瑪莉亞畢卡索洛佩茲 1 nr
+>>> segmenter.add_word('堂何塞路伊思布拉斯可')
+>>> segmenter.add_word('瑪莉亞畢卡索洛佩茲')
+>>> ['畢卡索', '是', '堂何塞路伊思布拉斯可', '和', '瑪莉亞畢卡索洛佩茲', '的', '第一', '個', '孩子', '。']
+>>> postager.add_tag('堂何塞路伊思布拉斯可', 'nr')
+>>> postager.add_tag('瑪莉亞畢卡索洛佩茲', 'nr')
+>>> postager.tagging(['畢卡索', '是', '堂何塞路伊思布拉斯可', '和', '瑪莉亞畢卡索洛佩茲', '的', '第一', '個', '孩子', '。'])
+>>> ['vn', 'v', 'nr', 'c', 'nr', 'u', 'm', 'q', 'n', 'w']
+```
 
 ## 授權
 

@@ -19,17 +19,21 @@ import math
 import joblib
 from hanlperceptron.model import LinearModel
 from hanlperceptron.instance import CWSInstance, POSInstance, NERInstance
-from hanlperceptron.other import CharTable
+from hanlperceptron.other import CharTable, get_module_path
 
 word2POS = {}
 char_table = CharTable()
+coreDictPath = get_module_path('data/CoreNatureDictionary.txt')
 
 class DictAnalyzer:
-    def __init__(self, ):
+    def __init__(self, file=None):
         self.FREQ = {}
         self.total = 0
-        
-    def init(self, file):
+
+        if file:
+            self.load(file)
+
+    def load(self, file):
         global word2POS
         
         with open(file, 'r', encoding='utf-8') as fr:
@@ -48,14 +52,30 @@ class DictAnalyzer:
                     word, freq, pos = field
                     self.FREQ[word] = int(freq)
                     word2POS[word] = pos
-                
+                    
+                elif (len(field) - 1) % 2 == 0:
+                    word, freq, pos = field
+                    self.FREQ[word] = int(freq)
+
                 for ch in range(len(word)):
                     wfrag = word[:ch + 1]
                     if wfrag not in self.FREQ:
                         self.FREQ[wfrag] = 0
                         
                 self.total += self.FREQ[word]
-        
+
+    def add(self, word, freq = 1000):
+        for ch in range(len(word)):
+            wfrag = word[:ch + 1]
+            if wfrag not in self.FREQ:
+                self.FREQ[wfrag] = 0
+        self.FREQ[word] = freq
+        self.total += freq
+
+    def reset(self,):
+        self.FREQ = {}
+        self.total = 0
+
     def calc(self, sentence, DAG, route):
         N = len(sentence)
         route[N] = (0, 0)
@@ -112,8 +132,8 @@ class DictAnalyzer:
 class Segmenter:
     def __init__(self, file=None, custom_dict=None):
         self.model = LinearModel()
-        self.enable_dict = False
-        self.dictanalyzer = DictAnalyzer()
+        self.enable_dict = True
+        self.dictanalyzer = DictAnalyzer(coreDictPath)
         
         if file:
             self.load(file)
@@ -121,7 +141,7 @@ class Segmenter:
         if custom_dict:
             self.load_custom_dict(custom_dict)
     
-    def segment(self, sentence, viterbi=True):
+    def _segment(self, sentence, viterbi=True):
     
         if len(sentence) == 1:
             return [sentence]
@@ -148,11 +168,11 @@ class Segmenter:
         
         return w_list
     
-    def segment_with_dict(self, sentence):
+    def segment(self, sentence, viterbi=True):
         if self.enable_dict:
-            return self.dictanalyzer.segment(sentence, self.segment)
+            return self.dictanalyzer.segment(sentence, self._segment)
         else:
-            return self.segment(sentence)
+            return self._segment(sentence, viterbi)
 
     def save(self, file):
         joblib.dump(self.model, file, compress=3)
@@ -168,18 +188,32 @@ class Segmenter:
         if load_from_pkl_fail:
             self.model.load(file)
         
-    def load_custom_dict(self, file):
-        self.enable_dict = True
-        self.dictanalyzer.init(file)
-        
+    def load_custom_dict(self, file, cover=False):
+        if not cover:
+            self.dictanalyzer.load(file)
+        else:
+            self.dictanalyzer.reset()
+            self.dictanalyzer.load(file)
+
+    def add_word(self, word, freq = 1000):
+        self.dictanalyzer.add(word, freq)
+
 class POSTagger:
     def __init__(self, file=None):
         self.model = LinearModel()
-        
+        self.enable_dict = True
+        self.word2POS = {}
+
         if file:
             self.load(file)
-    
-    def tag(self, w_list, viterbi=True):
+        
+        if len(word2POS) == 0:
+            # force init
+            DictAnalyzer().load(coreDictPath)
+            # copy object
+            self.word2POS = dict(word2POS)
+
+    def _tagging(self, w_list, viterbi=True):
         normalize_w_list = [char_table.normalize(word) for word in w_list]
         instance = POSInstance(normalize_w_list, self.model.feature_map)
         
@@ -190,9 +224,9 @@ class POSTagger:
         
         return result
     
-    def tag_with_dict(self, w_list, viterbi=True):
-        result = self.tag(w_list, viterbi)
-        result = [word2POS[w] if w in word2POS else result[i] for i, w in enumerate(w_list)]
+    def tagging(self, w_list, viterbi=True):
+        result = self._tagging(w_list, viterbi)
+        result = [self.word2POS[w] if w in self.word2POS else result[i] for i, w in enumerate(w_list)]
         return result
 
     def save(self, file):
@@ -208,6 +242,9 @@ class POSTagger:
         
         if load_from_pkl_fail:
             self.model.load(file)
+
+    def add_tag(self, word, pos):
+        self.word2POS[word] = pos
             
 class NERecognizer:
     def __init__(self, file=None):
